@@ -1,0 +1,94 @@
+{% load bootstrap4 %}
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+        <title>{% block title %} Главная {% endblock %} - Доска объявлений</title>
+        {% bootstrap_css %}
+        <link rel="stylesheet" type="text/css" href="{% static 'main/style.css' %}">
+        {% bootstrap_javascript jquery='slim' %}
+    </head>
+    <body class="container-fluid">
+        <header class="mb-4">
+            <h1 class="display-1 text-center">FastSale</h1>
+        </header>
+        <div class="row">
+            <ul class="col nav justify-content-end border">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Регистрация</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" data-toggle="dropdown"
+                    href="#" role="button" aria-haspopup="true" aria-expanded="false">Профиль</a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="#">Мои объъявления</a>
+                        <a class="dropdown-item" href="#">Изменить личные данные</a>
+                        <a class="dropdown-item" href="#">Изменить пароль</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#">Выйти</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#">Удалить</a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="№">Вход</a>
+                </li>
+            </ul>
+        </div>
+        <div class="row">
+            <nav class="col-md-auto nav flex-column border">
+                <a class="nav-link root" href="#">Главная</a>
+                <span class="nav-link root font-weight-bold">Недвижимость</span>
+                <a class="nav-link" href="#">Жилье</a>
+                <a class="nav-link" href="#">Склады</a>
+                <a class="nav-link" href="#">Гаражи</a>
+                <span class="nav-link root font-weight-bold">Транспорт</span>
+                <a class="nav-link" href="#">Легковой</a>
+                <a class="nav-link" href="#">Грузовой</a>
+            </nav>
+            <section class="col border py-2">
+                {% bootstrap_messages %}
+                {% block content %}
+                {% endblock %}
+            </section>        
+        </div>
+        <footer class="page-footer font-small blue pt-4">
+            <div class="container-fluid text-center text-md-left">
+                <div class="row">
+                    <div class="col-md-6 mt-md-0 mt-3">
+                        <h5 class="text-uppercase">FastSale</h5>
+                        <p> — интернет-сервис для размещения объявлений о товарах, занимающий второе место в мире и первое в России среди онлайн-классифайдов. Товары, предлагаемые к продаже на «FastSale», могут быть новыми и бывшими в использовании. На 2020 год на «FastSale» размещено более 59 млн активных объявлений.</p>            
+                    </div>          
+                    <hr class="clearfix w-100 d-md-none pb-3">
+                    <div class="col-md-3 mb-md-0 mb-3">
+                        <h5 class="text-uppercase">Страницы</h5>
+                        <ul class="list-unstyled">
+                            <li>
+                                <a href="/about/">О нас</a>
+                            </li>
+                            <li>
+                                <a href="#">Контакты</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-3 mb-md-0 mb-3">
+                        <h5 class="text-uppercase">Соцсети</h5>
+                        <ul class="list-unstyled">
+                            <li>
+                                <a href="#">■</a>
+                            </li>
+                            <li>
+                                <a href="#">■</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <p class="text-center font-italic">&copy; 2020</p>
+        </footer>
+    </body>
+</html>
