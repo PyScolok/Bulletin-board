@@ -6,9 +6,10 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-        <title>{% block title %} Главная {% endblock %} - Доска объявлений</title>
+        <title>{% block title %} Главная {% endblock %} - FastSale</title>
         {% bootstrap_css %}
         <link rel="stylesheet" type="text/css" href="{% static 'main/style.css' %}">
+        <link href="{% static 'main/font-awesome.css' %}" rel="stylesheet">
         {% bootstrap_javascript jquery='slim' %}
     </head>
     <body class="container-fluid">
@@ -17,30 +18,33 @@
         </header>
         <div class="row">
             <ul class="col nav justify-content-end border">
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Регистрация</a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" data-toggle="dropdown"
-                    href="#" role="button" aria-haspopup="true" aria-expanded="false">Профиль</a>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" href="#">Мои объъявления</a>
-                        <a class="dropdown-item" href="#">Изменить личные данные</a>
-                        <a class="dropdown-item" href="#">Изменить пароль</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">Выйти</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">Удалить</a>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="№">Вход</a>
-                </li>
+                {% if user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" data-toggle="dropdown"
+                        href="#" role="button" aria-haspopup="true" aria-expanded="false">Профиль</a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="{% url 'main:profile' %}">Мои объъявления</a>
+                            <a class="dropdown-item" href="{% url 'main:profile_change' %}">Изменить личные данные</a>
+                            <a class="dropdown-item" href="#">Изменить пароль</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="{% url 'main:logout' %}">Выйти</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#">Удалить</a>
+                        </div>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'main:login' %}">Вход</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Регистрация</a>
+                    </li>
+                {% endif %}
             </ul>
         </div>
         <div class="row">
             <nav class="col-md-auto nav flex-column border">
-                <a class="nav-link root" href="#">Главная</a>
+                <a class="nav-link root" href="{% url 'main:index' %}">Главная</a>
                 <span class="nav-link root font-weight-bold">Недвижимость</span>
                 <a class="nav-link" href="#">Жилье</a>
                 <a class="nav-link" href="#">Склады</a>
@@ -60,7 +64,7 @@
                 <div class="row">
                     <div class="col-md-6 mt-md-0 mt-3">
                         <h5 class="text-uppercase">FastSale</h5>
-                        <p> — интернет-сервис для размещения объявлений о товарах, занимающий второе место в мире и первое в России среди онлайн-классифайдов. Товары, предлагаемые к продаже на «FastSale», могут быть новыми и бывшими в использовании. На 2020 год на «FastSale» размещено более 59 млн активных объявлений.</p>            
+                        <p class="footer-text"> — интернет-сервис для размещения объявлений о товарах, занимающий второе место в мире и первое в России среди онлайн-классифайдов. Товары, предлагаемые к продаже на «FastSale», могут быть новыми и бывшими в использовании. На 2020 год на «FastSale» размещено более 59 млн активных объявлений.</p>            
                     </div>          
                     <hr class="clearfix w-100 d-md-none pb-3">
                     <div class="col-md-3 mb-md-0 mb-3">
@@ -78,17 +82,26 @@
                         <h5 class="text-uppercase">Соцсети</h5>
                         <ul class="list-unstyled">
                             <li>
-                                <a href="#">■</a>
+                                <a href="https://vk.com/nrgizerbot" class="btn btn-social-icon btn-lg">
+                                    <span class="fa fa-vk"></span>
+                                </a>
                             </li>
                             <li>
-                                <a href="#">■</a>
+                                <a href="https://github.com/PyScolok" class="btn btn-social-icon btn-lg">
+                                    <span class="fa fa-github"></span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.instagram.com/nik_rod96/" class="btn btn-social-icon btn-lg">
+                                    <span class="fa fa-instagram"></span>
+                                </a>
                             </li>
                         </ul>
                     </div>
                 </div>
             </div>
             <hr>
-            <p class="text-center font-italic">&copy; 2020</p>
+            <p class="text-center font-italic">&copy; PyScolok 2020</p>
         </footer>
     </body>
 </html>
