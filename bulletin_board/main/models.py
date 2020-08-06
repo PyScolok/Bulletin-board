@@ -1,5 +1,16 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.dispatch import Signal
+
+from .utilities import send_activasion_notification
+
+
+user_registrated = Signal(providing_args=['instance'])
+
+def user_registrated_dispatcher(sender, **kwargs):
+    send_activasion_notification(kwargs['instance'])
+
+user_registrated.connect(user_registrated_dispatcher)
 
 
 class AdvancedUser(AbstractUser):

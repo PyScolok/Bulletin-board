@@ -1,0 +1,13 @@
+{% extends 'layout/base.html' %}
+
+{% block title %} Активация {% endblock %}
+
+{% block content %}
+    <div class="container ml-2">
+        <div class="col-sm-8">
+            <h2>Активация неудалась</h2>
+            <p>Пользователь с таким именем был активирован ранее.</p>
+            <a href="{% url 'main:login' %}">Войти на сайт</a>
+        </div>
+    </div>
+{% endblock %}

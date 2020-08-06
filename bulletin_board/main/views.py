@@ -2,12 +2,15 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
-from django.views.generic.edit import UpdateView
+from django.views.generic.edit import UpdateView, CreateView
+from django.views.generic.base import TemplateView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
+from django.core.signing import BadSignature
 
 from .models import AdvancedUser
-from .forms import ChangeUserInfoForm
+from .forms import ChangeUserInfoForm, RegisterUserForm
+from .utilities import signer
 
 
 class ChangeUserInfoView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
@@ -43,6 +46,21 @@ class BBLogoutView(LoginRequiredMixin, LoginView):
     template_name = 'main/logout.html'
 
 
+class RegisterUserView(CreateView):
+    """Страница регистрации пользователя"""
+
+    model = AdvancedUser
+    template_name = 'main/register_user.html'
+    form_class = RegisterUserForm
+    success_url = reverse_lazy('main:register_done')
+
+
+class RegisterDoneView(TemplateView):
+    """Страница успешной регистрации"""
+
+    template_name = 'main/register_done.html'
+
+
 def index(request):
     """Главная страница"""
     return render(request, 'main/index.html')
@@ -50,3 +68,19 @@ def index(request):
 def profile(request):
     """Страница профиля"""
     return render(request, 'main/profile.html')
+
+def user_activate(request, sign):
+    """Страницы с результатом активации"""
+    try:
+        username = signer.unsign(sign)
+    except BadSignature:
+        return render(request, 'main/bad_signature.html')
+    user = get_object_or_404(AdvancedUser, username=username)
+    if user.is_activated:
+        template = 'main/user_is_activated.html'
+    else:
+        template = 'main/activation_done.html'
+        user.is_active = True
+        user.is_activated = True
+        user.save()
+    return render(request, template)
