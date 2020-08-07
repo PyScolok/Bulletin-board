@@ -1,8 +1,10 @@
 from django.shortcuts import render, get_object_or_404
-from django.contrib.auth.views import LoginView
+from django.contrib import messages
+from django.contrib.auth import logout
+from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView, PasswordChangeDoneView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
-from django.views.generic.edit import UpdateView, CreateView
+from django.views.generic.edit import UpdateView, CreateView, DeleteView
 from django.views.generic.base import TemplateView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
@@ -28,10 +30,23 @@ class ChangeUserInfoView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
         return super().dispatch(request, *args, **kwargs)
 
     def get_object(self, queryset=None):
-        """Извлечение исправленной записи"""
+        """Поиск пользователя"""
         if not queryset:
             queryset = self.get_queryset()
         return get_object_or_404(queryset, pk=self.user_id)
+
+
+class ChangeUserPasswordView(PasswordChangeView):
+    """Cмена пароля пользвателя"""
+
+    template_name = 'main/change_password.html'
+    success_url = reverse_lazy('main:password_change_done')
+
+
+class ChangePasswordDoneView(PasswordChangeDoneView):
+    """Страница успешной смены пароля"""
+
+    template_name = 'main/password_change_done.html'
 
 
 class BBLoginView(LoginView):
@@ -40,7 +55,7 @@ class BBLoginView(LoginView):
     template_name = 'main/login.html'
 
 
-class BBLogoutView(LoginRequiredMixin, LoginView):
+class BBLogoutView(LoginRequiredMixin, LogoutView):
     """Страница выхода"""
 
     template_name = 'main/logout.html'
@@ -53,6 +68,31 @@ class RegisterUserView(CreateView):
     template_name = 'main/register_user.html'
     form_class = RegisterUserForm
     success_url = reverse_lazy('main:register_done')
+
+
+class DeleteUserView(DeleteView):
+    """Страница уаления пользователя"""
+
+    model = AdvancedUser
+    template_name = 'main/delete_user.html'
+    success_url = reverse_lazy('main:index')
+
+    def dispatch(self, request, *args, **kwargs):
+        """Извлечение и сохранение id пользователя"""
+        self.user_id = request.user.pk
+        return super().dispatch(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        """Выход пользвателя подлежащего удалению"""
+        logout(request)
+        messages.add_message(request, messages.SUCCESS, 'Пользователь удалён')
+        return super().post(self, request, *args, **kwargs)
+
+    def get_object(self, queryset=None):
+        """Поиск удаляемого пользователя"""
+        if not queryset:
+            queryset = self.get_queryset()
+        return get_object_or_404(queryset, pk=self.user_id)
 
 
 class RegisterDoneView(TemplateView):
