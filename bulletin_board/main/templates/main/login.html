@@ -13,12 +13,17 @@
         <div class="container ml-2">
             <div class="col-sm-8">
                 <h2>Вход</h2>
+                <p>Войти через:</p>
+                <a href="{% url 'social:begin' 'vk-oauth2' %}" class="btn btn-social-icon btn-lg">
+                    <span class="fa fa-vk"></span>
+                </a>
                 <form method="POST">
                     {% csrf_token %}
                     {% bootstrap_form form layout='horizontal' %}
                     <input type="hidden" name="next" value="{{ next }}">
                     {% buttons submit='Войти' %}{% endbuttons %}
                 </form>
+                <a href="{% url 'main:reset_password' %}">Забыли пароль?</a>
             </div>
         </div>
     {% endif %}

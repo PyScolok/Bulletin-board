@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 
 from .models import AdvancedUser, user_registrated
 
+
 class ChangeUserInfoForm(forms.ModelForm):
     """Форма изменения основных личных данных"""
 

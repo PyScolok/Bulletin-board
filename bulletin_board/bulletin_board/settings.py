@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.flatpages',
     'main.apps.MainConfig',
     'bootstrap4',
+    'social_django',
 ]
 
 MIDDLEWARE = [
@@ -67,6 +68,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -74,6 +77,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'bulletin_board.wsgi.application'
 
+# SMTP settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'oskolok2013@gmail.com'
@@ -96,6 +100,8 @@ DATABASES = {
     }
 }
 
+SOCIAL_AUTH_POSTGRES_JSONBFIELD = True
+
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -115,6 +121,18 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
+# Authentication settings
+
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.vk.VKOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+SOCIAL_AUTH_VK_OAUTH2_KEY = '7561685'
+SOCIAL_AUTH_VK_OAUTH2_SECRET = 'YOghWRgnh47Z4xljPJXd'
+SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email']
+LOGIN_REDIRECT_URL = 'main:profile'
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/

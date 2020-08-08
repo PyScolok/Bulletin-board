@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import logout
-from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView, PasswordChangeDoneView
+from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView, PasswordResetView, PasswordResetConfirmView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.views.generic.edit import UpdateView, CreateView, DeleteView
@@ -9,6 +9,9 @@ from django.views.generic.base import TemplateView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
 from django.core.signing import BadSignature
+from django.utils.http import urlsafe_base64_encode
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.encoding import force_bytes
 
 from .models import AdvancedUser
 from .forms import ChangeUserInfoForm, RegisterUserForm
@@ -43,10 +46,24 @@ class ChangeUserPasswordView(PasswordChangeView):
     success_url = reverse_lazy('main:password_change_done')
 
 
-class ChangePasswordDoneView(PasswordChangeDoneView):
-    """Страница успешной смены пароля"""
+class ResetUserPasswordView(PasswordResetView):
+    """Иницация сброса пароля"""
 
-    template_name = 'main/password_change_done.html'
+    template_name = 'main/reset_password.html'
+    success_url = reverse_lazy('main:password_reset_done')
+    subject_template_name = 'email/password_reset_subject.txt'
+    email_template_name = 'email/password_reset_email.txt'
+    extra_email_context = {
+        'protocol': 'http',
+        'domain': '127.0.0.1:8000',
+    }
+
+
+class UserPasswordResetConfirmView(PasswordResetConfirmView):
+    """Сброс пароля"""
+    
+    template_name = 'main/confirm_password.html'
+    success_url = reverse_lazy('main:password_reset_complete')
 
 
 class BBLoginView(LoginView):
