@@ -141,3 +141,6 @@ def user_activate(request, sign):
         user.is_activated = True
         user.save()
     return render(request, template)
+
+def by_rubric(request, pk):
+    pass

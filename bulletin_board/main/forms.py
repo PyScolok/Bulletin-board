@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth import password_validation
 from django.core.exceptions import ValidationError
 
-from .models import AdvancedUser, user_registrated
+from .models import AdvancedUser, user_registrated, SuperRubric, SubRubric
 
 
 class ChangeUserInfoForm(forms.ModelForm):
@@ -52,3 +52,13 @@ class RegisterUserForm(forms.ModelForm):
     class Meta:
         model = AdvancedUser
         fields = ('username', 'email', 'password1', 'password2', 'first_name', 'last_name', 'send_messages')
+    
+
+class SubRubricForm(forms.ModelForm):
+    """Форма выбора подрубрик"""
+
+    super_rubric = forms.ModelChoiceField(queryset=SuperRubric.objects.all(), empty_label=None, required=True, label='Надрубрика')
+
+    class Meta:
+        model = SubRubric
+        fields = '__all__'

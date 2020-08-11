@@ -2,8 +2,9 @@ import datetime
 
 from django.contrib import admin
 
-from .models import AdvancedUser
+from .models import AdvancedUser, SubRubric, SuperRubric
 from .utilities import send_activasion_notification
+from .forms import SubRubricForm
 
 
 def send_activasion_notifications(modeladmin, request, queryset):
@@ -42,6 +43,8 @@ class NonactivatedFilter(admin.SimpleListFilter):
         
 
 class AdvancedUserAdmin(admin.ModelAdmin):
+    """Пользователи"""
+
     list_display =  ('__str__', 'is_activated', 'date_joined')
     search_fields = ('username', 'email', 'first_name', 'last_name')
     list_filter = (NonactivatedFilter, )
@@ -56,4 +59,25 @@ class AdvancedUserAdmin(admin.ModelAdmin):
     readonly_fields = ('last_login', 'date_joined')
     actions = (send_activasion_notifications, )
 
+
+class SubRubricInline(admin.TabularInline):
+    
+    model = SubRubric
+
+
+class SuperRubricAdmin(admin.ModelAdmin):
+    """Надрубрики"""
+
+    exclude = ('super_rubric', )
+    inlines = (SubRubricInline, )
+
+
+class SubRubricAdmin(admin.ModelAdmin):
+    """Подрубрики"""
+
+    form = SubRubricForm
+
+
 admin.site.register(AdvancedUser, AdvancedUserAdmin)
+admin.site.register(SuperRubric, SuperRubricAdmin)
+admin.site.register(SubRubric, SubRubricAdmin)

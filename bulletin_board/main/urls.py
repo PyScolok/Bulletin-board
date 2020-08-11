@@ -20,4 +20,5 @@ urlpatterns = [
     path('accounts/register/done/', views.RegisterDoneView.as_view(), name='register_done'),
     path('accounts/register/activate/<str:sign>/', views.user_activate, name='register_activate'),
     path('', views.index, name='index'),
+    path('<int:pk>', views.by_rubric, name='by_rubric'),
 ]
