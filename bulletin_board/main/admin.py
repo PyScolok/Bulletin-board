@@ -2,7 +2,7 @@ import datetime
 
 from django.contrib import admin
 
-from .models import AdvancedUser, SubRubric, SuperRubric
+from .models import AdvancedUser, SubRubric, SuperRubric, Ad, AdditionalImage
 from .utilities import send_activasion_notification
 from .forms import SubRubricForm
 
@@ -61,7 +61,8 @@ class AdvancedUserAdmin(admin.ModelAdmin):
 
 
 class SubRubricInline(admin.TabularInline):
-    
+    """Редактор подрубрик"""
+
     model = SubRubric
 
 
@@ -78,6 +79,21 @@ class SubRubricAdmin(admin.ModelAdmin):
     form = SubRubricForm
 
 
+class AdditionalImageInline(admin.TabularInline):
+    """Редактор дополнительных изображений"""
+
+    model = AdditionalImage
+
+
+class AdAdmin(admin.ModelAdmin):
+    """Объявления"""
+
+    list_display = ('rubric', 'title', 'description', 'author', 'created_at')
+    fields = (('rubric', 'author'), 'title', 'description', 'price', 'contacts', 'image', 'is_active')
+    inlines = (AdditionalImageInline, )
+
+
 admin.site.register(AdvancedUser, AdvancedUserAdmin)
 admin.site.register(SuperRubric, SuperRubricAdmin)
 admin.site.register(SubRubric, SubRubricAdmin)
+admin.site.register(Ad, AdAdmin)

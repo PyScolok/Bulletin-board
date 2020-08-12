@@ -42,6 +42,9 @@ INSTALLED_APPS = [
     'main.apps.MainConfig',
     'bootstrap4',
     'social_django',
+    'django_cleanup',
+    'easy_thumbnails',
+
 ]
 
 MIDDLEWARE = [
@@ -155,5 +158,19 @@ AUTH_USER_MODEL = 'main.AdvancedUser'
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+
+THUMBNAIL_ALIASES = {
+    '': {
+        'default':
+        {
+            'size': (96, 96),
+            'crop': 'scale',
+        },
+    },
+}
+THUMBNAIL_BASEDIR = 'thumbnails'
 
 SITE_ID = 1

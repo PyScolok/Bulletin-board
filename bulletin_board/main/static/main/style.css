@@ -14,3 +14,12 @@ p {
 .footer-text {
     width: 85%;
 }
+
+/* ads_list */
+.main-image {
+    width: 300px;
+}
+
+.additional-image {
+    width: 180px;
+}

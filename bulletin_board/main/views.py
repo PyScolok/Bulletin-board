@@ -12,9 +12,11 @@ from django.core.signing import BadSignature
 from django.utils.http import urlsafe_base64_encode
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes
+from django.core.paginator import Paginator
+from django.db.models import Q
 
-from .models import AdvancedUser
-from .forms import ChangeUserInfoForm, RegisterUserForm
+from .models import AdvancedUser, Ad, SubRubric
+from .forms import ChangeUserInfoForm, RegisterUserForm, SearchAdsForm 
 from .utilities import signer
 
 
@@ -143,4 +145,36 @@ def user_activate(request, sign):
     return render(request, template)
 
 def by_rubric(request, pk):
-    pass
+    """Список объявлений"""
+
+    rubric = get_object_or_404(SubRubric, pk=pk)
+    ads = Ad.objects.filter(is_active=True, rubric=pk)
+    if 'keyword' in request.GET:
+        keyword = request.GET['keyword']
+        q = Q(title__icontains=keyword) | Q(description__icontains=keyword)
+        ads = ads.filter(q)
+    else:
+        keyword = ''
+    form = SearchAdsForm(initial={'keyword':keyword})
+    paginator = Paginator(ads, 2)
+    if 'page' in request.GET:
+        page_num = request.GET['page']
+    else:
+        page_num = 1
+    page = paginator.get_page(page_num)
+    context = {
+        'rubric': rubric, 'page': page,
+        'ads': page.object_list, 'form': form
+    }
+    return render(request, 'main/by_rubric.html', context)
+
+def detail(request, rubric_pk, pk):
+    """Детальное описание объявления"""
+    ad = get_object_or_404(Ad, pk=pk)
+    additional_images = ad.additionalimage_set.all()
+    context = {
+        'ad': ad,
+        'ais': additional_images
+    }
+    return render(request, 'main/detail.html', context)
+
