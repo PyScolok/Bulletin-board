@@ -1,0 +1,42 @@
+{% extends  'layout/base.html' %}
+
+{% block title %}{{ ad.title }} {{ ad.rubric.name }}{% endblock %}
+
+{% block content %}
+    <div class="container-fluid mt-3">
+        <div class="row">
+            {% if ad.image %}
+                <div class="col-md-auto">
+                    <img class="main-image" src="{{ ad.image.url }}">
+                </div>
+            {% endif %}
+            <div class="col">
+                <h2>{{ ad.title }}</h2>
+                <p>{{ ad.description }}</p>
+                <p class="font-weight-bold">{{ ad.price }} руб.</p>
+                <p>{{ ad.contacts }}</p>
+                <p class="text-right font-italic">{{ ad.created_at }}</p>
+                <p class="text-right mt-2">
+                    <a href="{% url 'main:profile_ad_change' pk=ad.pk %}">Исправить</a>
+                </p>
+                <p class="text-right mt-2">
+                    <a href="{% url 'main:profile_ad_delete' pk=ad.pk %}">Удалить</a>
+                </p>
+            </div>
+        </div>
+    </div>
+    {% if ais %}
+        <div class="col">
+            <div class="d-flex justify-content-arround flex-wrap mt-5">
+                {% for img in ais %}
+                    <div>
+                        <img class="additional-image mr-1" src="{{ img.image.url }}" alt="">
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+    <p class="mt-3">
+        <a href="{% url 'main:profile' %}">Назад</a>
+    </p>
+{% endblock %}

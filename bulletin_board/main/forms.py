@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth import password_validation
 from django.core.exceptions import ValidationError
 
-from .models import AdvancedUser, user_registrated, SuperRubric, SubRubric
+from .models import AdvancedUser, user_registrated, SuperRubric, SubRubric, Ad, AdditionalImage
 
 
 class ChangeUserInfoForm(forms.ModelForm):
@@ -68,4 +68,16 @@ class SearchAdsForm(forms.Form):
     """Форма поиска объявлений по названию"""
 
     keyword = forms.CharField(required=False, max_length=20, label='')
+
+
+class AdForm(forms.ModelForm):
+    """Форма добавления объявления"""
+
+    class Meta:
+        model = Ad
+        fields = '__all__'
+        widgets = {'author': forms.HiddenInput}
+
+# Нбор форм для добавления дополнительных изображений
+AIFormSet = forms.inlineformset_factory(Ad, AdditionalImage, fields="__all__")
     

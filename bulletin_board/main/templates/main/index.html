@@ -1,5 +1,32 @@
 {% extends 'layout/base.html' %}
 
+{% load thumbnail %}
+{% load static %}
+
 {% block content %}
     <h2>Последние 10 объявлений</h2>
+    {% if ads %}
+        <ul class="list-unstyled">
+            {% for ad in ads %}
+                <li class="media my-5 p-3 border">
+                    {% url 'main:detail' rubric_pk=ad.rubric.pk pk=ad.pk as url %}
+                    <a href="{{ url }}">
+                        {% if ad.image %}
+                            <img class="mr-3" src="{% thumbnail ad.image 'default' %}">
+                        {% else %}
+                            <img class="mr-3" src="{% static 'main/empty.jpg' %}">
+                        {% endif %}
+                    </a>
+                    <div class="media-body">
+                        <h3>
+                            <a href="{{ url }}">{{ ad.title }}</a>
+                        </h3>
+                        <div>{{ ad.description }}</div>
+                        <p class="text-right font-weight-bold">{{ ad.price }} руб.</p>
+                        <p class="text-right font-italic">{{ ad.created_at }}</p>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 {% endblock %}

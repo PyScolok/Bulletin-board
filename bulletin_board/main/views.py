@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView, PasswordResetView, PasswordResetConfirmView
@@ -16,7 +16,7 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 
 from .models import AdvancedUser, Ad, SubRubric
-from .forms import ChangeUserInfoForm, RegisterUserForm, SearchAdsForm 
+from .forms import ChangeUserInfoForm, RegisterUserForm, SearchAdsForm, AdForm, AIFormSet
 from .utilities import signer
 
 
@@ -122,11 +122,76 @@ class RegisterDoneView(TemplateView):
 
 def index(request):
     """Главная страница"""
-    return render(request, 'main/index.html')
+    ads = Ad.objects.filter(is_active=True)[:10]
+    context = {'ads': ads}
+    return render(request, 'main/index.html', context)
 
+@login_required
 def profile(request):
     """Страница профиля"""
-    return render(request, 'main/profile.html')
+    ads = Ad.objects.filter(author=request.user.pk)
+    context = {'ads': ads}
+    return render(request, 'main/profile.html', context)
+
+@login_required
+def profile_ad_detail(request, pk):
+    """Детальное описание объявления пользователя"""
+    ad = get_object_or_404(Ad, pk=pk)
+    additional_images = ad.additionalimage_set.all()
+    context = {
+        'ad': ad,
+        'ais': additional_images
+    }
+    return render(request, 'main/profile_ad_detail.html', context)
+
+@login_required
+def profile_ad_add(request):
+    """Добавление объявления"""
+    if request.method == 'POST':
+        form =AdForm(request.POST, request.FILES)
+        if form.is_valid():
+            ad = form.save()
+            formset = AIFormSet(request.POST, request.FILES, instance=ad)
+            if formset.is_valid():
+                formset.save()
+                messages.add_message(request, messages.SUCCESS, 'Объявление добавлено')
+                return redirect('main:profile')
+    else:
+        form = AdForm(initial={'author': request.user.pk})
+        formset = AIFormSet()
+    context = {'form': form, 'formset': formset}
+    return render(request, 'main/profile_ad_add.html', context)
+
+@login_required
+def profile_ad_change(request, pk):
+    """Изменение объявления"""
+    ad = get_object_or_404(Ad, pk=pk)
+    if request.method == 'POST':
+        form = AdForm(request.POST, request.FILES, instance=ad)
+        if form.is_valid:
+            ad = form.save()
+            formset = AIFormSet(request.POST, request.FILES, instance=ad)
+            if formset.is_valid:
+                formset.save()
+            messages.add_message(request, messages.SUCCESS, 'Объявление измененено')
+            return redirect('main:profile')
+    else:
+        form = AdForm(instance=ad)
+        formset = AIFormSet(instance=ad)
+    context = {'form': form, 'formset': formset}
+    return render(request, 'main/profile_ad_change.html', context)
+
+@login_required
+def profile_ad_delete(request, pk):
+    """Удаление объявления"""
+    ad = get_object_or_404(Ad, pk=pk)
+    if request.method == "POST":
+        ad.delete()
+        messages.add_message(request, messages.SUCCESS, 'Объявление удалено')
+        return redirect('main:profile')
+    else:
+        context = {'ad': ad}
+        return render(request, 'main/profile_ad_delete.html', context)
 
 def user_activate(request, sign):
     """Страницы с результатом активации"""
@@ -146,7 +211,6 @@ def user_activate(request, sign):
 
 def by_rubric(request, pk):
     """Список объявлений"""
-
     rubric = get_object_or_404(SubRubric, pk=pk)
     ads = Ad.objects.filter(is_active=True, rubric=pk)
     if 'keyword' in request.GET:
