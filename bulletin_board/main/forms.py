@@ -1,8 +1,9 @@
 from django import forms
 from django.contrib.auth import password_validation
 from django.core.exceptions import ValidationError
+from snowpenguin.django.recaptcha3.fields import ReCaptchaField
 
-from .models import AdvancedUser, user_registrated, SuperRubric, SubRubric, Ad, AdditionalImage
+from .models import AdvancedUser, user_registrated, SuperRubric, SubRubric, Ad, AdditionalImage, Comment
 
 
 class ChangeUserInfoForm(forms.ModelForm):
@@ -80,4 +81,14 @@ class AdForm(forms.ModelForm):
 
 # Нбор форм для добавления дополнительных изображений
 AIFormSet = forms.inlineformset_factory(Ad, AdditionalImage, fields="__all__")
-    
+
+
+class CommentForm(forms.ModelForm):
+    """Форма добавления комментариев"""
+
+    captcha = ReCaptchaField()
+
+    class Meta:
+        model = Comment
+        exclude = ('is_active', )
+        widgets = {'ad': forms.HiddenInput}

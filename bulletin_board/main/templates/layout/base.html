@@ -1,5 +1,5 @@
 {% load bootstrap4 %}
-{% load static %}
+{% load static recaptcha3 %}
 
 <!DOCTYPE html>
 <html>
@@ -11,6 +11,8 @@
         <link rel="stylesheet" type="text/css" href="{% static 'main/style.css' %}">
         <link href="{% static 'main/font-awesome.css' %}" rel="stylesheet">
         {% bootstrap_javascript jquery='slim' %}
+        {% recaptcha_init %}
+        {% recaptcha_ready action_name='homepage' %}
     </head>
     <body class="container-fluid">
         <header class="mb-4">

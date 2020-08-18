@@ -2,7 +2,7 @@ import datetime
 
 from django.contrib import admin
 
-from .models import AdvancedUser, SubRubric, SuperRubric, Ad, AdditionalImage
+from .models import AdvancedUser, SubRubric, SuperRubric, Ad, AdditionalImage, Comment
 from .utilities import send_activasion_notification
 from .forms import SubRubricForm
 
@@ -93,7 +93,17 @@ class AdAdmin(admin.ModelAdmin):
     inlines = (AdditionalImageInline, )
 
 
+class CommentAdmin(admin.ModelAdmin):
+    """Комментарии"""
+
+    model = Comment
+    list_display = ('author', 'text', 'created_at')
+    search_fields = ('author', )
+    list_filter = ('created_at', 'is_active')
+
+
 admin.site.register(AdvancedUser, AdvancedUserAdmin)
 admin.site.register(SuperRubric, SuperRubricAdmin)
 admin.site.register(SubRubric, SubRubricAdmin)
 admin.site.register(Ad, AdAdmin)
+admin.site.register(Comment, CommentAdmin)

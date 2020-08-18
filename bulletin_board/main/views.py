@@ -15,8 +15,8 @@ from django.utils.encoding import force_bytes
 from django.core.paginator import Paginator
 from django.db.models import Q
 
-from .models import AdvancedUser, Ad, SubRubric
-from .forms import ChangeUserInfoForm, RegisterUserForm, SearchAdsForm, AdForm, AIFormSet
+from .models import AdvancedUser, Ad, SubRubric, Comment
+from .forms import ChangeUserInfoForm, RegisterUserForm, SearchAdsForm, AdForm, AIFormSet, CommentForm
 from .utilities import signer
 
 
@@ -138,9 +138,11 @@ def profile_ad_detail(request, pk):
     """Детальное описание объявления пользователя"""
     ad = get_object_or_404(Ad, pk=pk)
     additional_images = ad.additionalimage_set.all()
+    comments = Comment.objects.filter(ad=pk, is_active=True)
     context = {
         'ad': ad,
-        'ais': additional_images
+        'ais': additional_images,
+        'comments': comments,
     }
     return render(request, 'main/profile_ad_detail.html', context)
 
@@ -236,9 +238,27 @@ def detail(request, rubric_pk, pk):
     """Детальное описание объявления"""
     ad = get_object_or_404(Ad, pk=pk)
     additional_images = ad.additionalimage_set.all()
+    comments = Comment.objects.filter(ad=pk, is_active=True)
+    initial = {'ad': ad.pk}
+    if request.user.is_authenticated:
+        initial['author'] = request.user.username
+    else:
+        initial['author'] = 'Гость'
+    form_class = CommentForm
+    form = form_class(initial=initial)
+    if request.POST:
+        c_form = form_class(request.POST)
+        if c_form.is_valid:
+            c_form.save()
+            messages.add_message(request, messages.SUCCESS, 'Комментарий добавлен')
+        else:
+            form = c_form
+            messages.add_message(request, messages.WARNING, 'Комментарий не добавлен')
     context = {
         'ad': ad,
-        'ais': additional_images
+        'ais': additional_images,
+        'comments': comments,
+        'form': form,
     }
     return render(request, 'main/detail.html', context)
 

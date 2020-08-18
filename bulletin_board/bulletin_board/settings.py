@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'social_django',
     'django_cleanup',
     'easy_thumbnails',
+    'snowpenguin.django.recaptcha3',
 
 ]
 
@@ -172,5 +173,11 @@ THUMBNAIL_ALIASES = {
     },
 }
 THUMBNAIL_BASEDIR = 'thumbnails'
+
+# Recaptcha settings
+RECAPTCHA_PRIVATE_KEY = '6LcSdcAZAAAAAFnFGPZCFcy-Tcxjhu6V5Xg0Ftji'
+RECAPTCHA_PUBLIC_KEY = '6LcSdcAZAAAAAGhuYSAt0HVEh8oVIhuTAyab61Iz'
+RECAPTCHA_DEFAULT_ACTION = 'generic'
+RECAPTCHA_SCORE_THRESHOLD = 0.5
 
 SITE_ID = 1

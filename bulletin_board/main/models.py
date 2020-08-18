@@ -1,8 +1,9 @@
 from django.db import models
+from django.db.models.signals import post_save
 from django.contrib.auth.models import AbstractUser
 from django.dispatch import Signal
 
-from .utilities import send_activasion_notification, get_timestamp_path
+from .utilities import send_activasion_notification, get_timestamp_path, send_new_comment_nitification
 
 
 user_registrated = Signal(providing_args=['instance'])
@@ -11,6 +12,13 @@ def user_registrated_dispatcher(sender, **kwargs):
     send_activasion_notification(kwargs['instance'])
 
 user_registrated.connect(user_registrated_dispatcher)
+
+def post_save_dispatsher(sender, **kwargs):
+    author = kwargs['instance'].ad.author
+    if kwargs['created'] and author.send_messages:
+        send_new_comment_nitification(kwargs['instance'])
+
+
 
 
 class AdvancedUser(AbstractUser):
@@ -118,3 +126,24 @@ class AdditionalImage(models.Model):
     class Meta:
         verbose_name = 'Дополнительное изображение'
         verbose_name_plural = 'Дополнительные изображения'
+
+
+class Comment(models.Model):
+    """Модель комментариев к объявлениям"""
+
+    ad = models.ForeignKey(Ad, on_delete=models.CASCADE, verbose_name='Объявление')
+    author = models.CharField(max_length=30, verbose_name='Автор')
+    text = models.TextField(verbose_name='Текст')
+    is_active = models.BooleanField(default=True, verbose_name='Показывать?')
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True, verbose_name='Опубликован')
+
+    def __str__(self):
+        return 'Комментарий от %s' % self.author
+
+    class Meta:
+        verbose_name = 'Комментарий'
+        verbose_name_plural = 'Комментарии'
+        ordering = ['created_at']
+
+post_save.connect(post_save_dispatsher, sender=Comment)
+
