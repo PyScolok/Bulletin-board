@@ -24,7 +24,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('main.urls', namespace='')),
     path('pages/', include('django.contrib.flatpages.urls')),
-    path('socila/', include('social_django.urls', namespace='social')),
+    path('social/', include('social_django.urls', namespace='social')),
 ]
 
 if settings.DEBUG:

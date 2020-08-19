@@ -24,7 +24,7 @@ class ChangeUserInfoView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
     """Правка личных данных пользователя"""
 
     model = AdvancedUser
-    template_name = 'main/change_user_info.html'
+    template_name = 'accounts/change_user_info.html'
     form_class = ChangeUserInfoForm
     success_url = reverse_lazy('main:profile')
     success_message = 'Личные данные пользователя изменены.'
@@ -44,14 +44,14 @@ class ChangeUserInfoView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
 class ChangeUserPasswordView(PasswordChangeView):
     """Cмена пароля пользвателя"""
 
-    template_name = 'main/change_password.html'
+    template_name = 'accounts/change_password.html'
     success_url = reverse_lazy('main:password_change_done')
 
 
 class ResetUserPasswordView(PasswordResetView):
     """Иницация сброса пароля"""
 
-    template_name = 'main/reset_password.html'
+    template_name = 'accounts/reset_password.html'
     success_url = reverse_lazy('main:password_reset_done')
     subject_template_name = 'email/password_reset_subject.txt'
     email_template_name = 'email/password_reset_email.txt'
@@ -64,27 +64,27 @@ class ResetUserPasswordView(PasswordResetView):
 class UserPasswordResetConfirmView(PasswordResetConfirmView):
     """Сброс пароля"""
     
-    template_name = 'main/confirm_password.html'
+    template_name = 'accounts/confirm_password.html'
     success_url = reverse_lazy('main:password_reset_complete')
 
 
 class BBLoginView(LoginView):
     """Страница входа"""
 
-    template_name = 'main/login.html'
+    template_name = 'accounts/login.html'
 
 
 class BBLogoutView(LoginRequiredMixin, LogoutView):
     """Страница выхода"""
 
-    template_name = 'main/logout.html'
+    template_name = 'accounts/logout.html'
 
 
 class RegisterUserView(CreateView):
     """Страница регистрации пользователя"""
 
     model = AdvancedUser
-    template_name = 'main/register_user.html'
+    template_name = 'accounts/register_user.html'
     form_class = RegisterUserForm
     success_url = reverse_lazy('main:register_done')
 
@@ -93,7 +93,7 @@ class DeleteUserView(DeleteView):
     """Страница уаления пользователя"""
 
     model = AdvancedUser
-    template_name = 'main/delete_user.html'
+    template_name = 'accounts/delete_user.html'
     success_url = reverse_lazy('main:index')
 
     def dispatch(self, request, *args, **kwargs):
@@ -117,7 +117,7 @@ class DeleteUserView(DeleteView):
 class RegisterDoneView(TemplateView):
     """Страница успешной регистрации"""
 
-    template_name = 'main/register_done.html'
+    template_name = 'accounts/register_done.html'
 
 
 def index(request):
@@ -200,12 +200,12 @@ def user_activate(request, sign):
     try:
         username = signer.unsign(sign)
     except BadSignature:
-        return render(request, 'main/bad_signature.html')
+        return render(request, 'accounts/bad_signature.html')
     user = get_object_or_404(AdvancedUser, username=username)
     if user.is_activated:
-        template = 'main/user_is_activated.html'
+        template = 'accounts/user_is_activated.html'
     else:
-        template = 'main/activation_done.html'
+        template = 'accounts/activation_done.html'
         user.is_active = True
         user.is_activated = True
         user.save()

@@ -8,8 +8,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
         <title>{% block title %} Главная {% endblock %} - FastSale</title>
         {% bootstrap_css %}
-        <link rel="stylesheet" type="text/css" href="{% static 'main/style.css' %}">
-        <link href="{% static 'main/font-awesome.css' %}" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+        <link href="{% static 'css/font-awesome.css' %}" rel="stylesheet">
         {% bootstrap_javascript jquery='slim' %}
         {% recaptcha_init %}
         {% recaptcha_ready action_name='homepage' %}
