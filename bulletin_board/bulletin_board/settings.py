@@ -20,7 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '+y85%u!6=r@10+bldsz4k8do+z*a&marvxg!%0ok@mn5jof41%'
+SECRET_KEY = ''
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -85,8 +85,8 @@ WSGI_APPLICATION = 'bulletin_board.wsgi.application'
 # SMTP settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'oskolok2013@gmail.com'
-EMAIL_HOST_PASSWORD = 'asdf1gh2jkzxcvb4'
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
@@ -98,8 +98,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'bulletin_board_db',
-        'PASSWORD': 'asdf1gh2jkzxcvb3',
-        'USER': 'postgres',
+        'PASSWORD': '',
+        'USER': '',
         'HOST': '127.0.0.1',
         'PORT': '5432',
     }
@@ -134,8 +134,8 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
-SOCIAL_AUTH_VK_OAUTH2_KEY = '7561685'
-SOCIAL_AUTH_VK_OAUTH2_SECRET = 'YOghWRgnh47Z4xljPJXd'
+SOCIAL_AUTH_VK_OAUTH2_KEY = ''
+SOCIAL_AUTH_VK_OAUTH2_SECRET = ''
 SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email']
 LOGIN_REDIRECT_URL = 'main:profile'
 
@@ -177,8 +177,8 @@ THUMBNAIL_ALIASES = {
 THUMBNAIL_BASEDIR = 'thumbnails'
 
 # Recaptcha settings
-RECAPTCHA_PRIVATE_KEY = '6LcSdcAZAAAAAFnFGPZCFcy-Tcxjhu6V5Xg0Ftji'
-RECAPTCHA_PUBLIC_KEY = '6LcSdcAZAAAAAGhuYSAt0HVEh8oVIhuTAyab61Iz'
+RECAPTCHA_PRIVATE_KEY = ''
+RECAPTCHA_PUBLIC_KEY = ''
 RECAPTCHA_DEFAULT_ACTION = 'generic'
 RECAPTCHA_SCORE_THRESHOLD = 0.5
 
