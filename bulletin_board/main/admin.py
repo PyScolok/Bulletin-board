@@ -3,30 +3,31 @@ import datetime
 from django.contrib import admin
 
 from .models import AdvancedUser, SubRubric, SuperRubric, Ad, AdditionalImage, Comment
-from .utilities import send_activasion_notification
+from .utilities import send_activation_notification
 from .forms import SubRubricForm
 
 
-def send_activasion_notifications(modeladmin, request, queryset):
+def send_activation_notifications(model_admin, request, queryset):
     """Рассылка пользователям писем с предписаниеми выполнить активацию"""
     for user in queryset:
         if not user.is_activated:
-            send_activasion_notification(user)
-    modeladmin.message_user(request, 'Письма с оповещениями отправлены')
-
-send_activasion_notifications.short_description = 'Отправка писем с оповещениями об активации'
+            send_activation_notification(user)
+    model_admin.message_user(request, 'Письма с оповещениями отправлены')
 
 
-class NonactivatedFilter(admin.SimpleListFilter):
+send_activation_notifications.short_description = 'Отправка писем с оповещениями об активации'
+
+
+class ActivatedFilter(admin.SimpleListFilter):
     """Фильтрация пользователей по дате их активации"""
 
-    title ='Прошли активацию?'
-    parameter_name = 'actstate'
+    title = 'Прошли активацию?'
+    parameter_name = 'act_state'
 
     def lookups(self, request, model_admin):
         return (
             ('activated', 'Прошли'),
-            ('thredays', 'Не прошли более 3-ех дней'),
+            ('three_days', 'Не прошли более 3-ех дней'),
             ('week', 'Не прошли более недели'),
         )
 
@@ -34,7 +35,7 @@ class NonactivatedFilter(admin.SimpleListFilter):
         val = self.value()
         if val == 'activated':
             return queryset.filter(is_active=True, is_activated=True)
-        elif val == 'threedays':
+        elif val == 'three_days':
             register_date = datetime.date.today() - datetime.timedelta(days=3)
             return queryset.filter(is_active=False, is_activated=False, date_joined_date_lt=register_date)
         elif val == 'week':
@@ -45,9 +46,9 @@ class NonactivatedFilter(admin.SimpleListFilter):
 class AdvancedUserAdmin(admin.ModelAdmin):
     """Пользователи"""
 
-    list_display =  ('__str__', 'is_activated', 'date_joined')
+    list_display = ('__str__', 'is_activated', 'date_joined')
     search_fields = ('username', 'email', 'first_name', 'last_name')
-    list_filter = (NonactivatedFilter, )
+    list_filter = (ActivatedFilter, )
     fields = (
         ('username', 'email'),
         ('first_name', 'last_name'),
@@ -57,7 +58,7 @@ class AdvancedUserAdmin(admin.ModelAdmin):
         ('last_login', 'date_joined')
     )
     readonly_fields = ('last_login', 'date_joined')
-    actions = (send_activasion_notifications, )
+    actions = (send_activation_notifications, )
 
 
 class SubRubricInline(admin.TabularInline):

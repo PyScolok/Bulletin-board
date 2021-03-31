@@ -9,7 +9,7 @@ from bulletin_board.settings import ALLOWED_HOSTS
 signer = Signer()
 
 
-def send_activasion_notification(user):
+def send_activation_notification(user):
     """Отправка уведомлений на почту"""
     if ALLOWED_HOSTS:
         host = 'http://' + ALLOWED_HOSTS[0]
@@ -20,11 +20,13 @@ def send_activasion_notification(user):
     body_text = render_to_string('email/activation_letter_body.txt', context)
     user.email_user(subject, body_text)
 
-def get_timestamp_path(instance, filename):
+
+def get_timestamp_path(filename):
     """Генератор имен для дополнительных изображений к объявлению"""
     return '%s%s' % (datetime.now().timestamp(), splitext(filename)[1])
 
-def send_new_comment_nitification(comment):
+
+def send_new_comment_notification(comment):
     """Отправка уведомления о новом комментарии на почту"""
     if ALLOWED_HOSTS:
         host = 'http://' + ALLOWED_HOSTS[0]

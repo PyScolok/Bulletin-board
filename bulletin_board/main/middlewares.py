@@ -1,10 +1,8 @@
 from .models import SubRubric
 
+
 def bb_context_processor(request):
-    context = {}
-    context['rubrics'] = SubRubric.objects.all()
-    context['keyword'] = ''
-    context['all'] = ''
+    context = {'rubrics': SubRubric.objects.all(), 'keyword': '', 'all': ''}
     if 'keyword' in request.GET:
         keyword = request.GET['keyword']
         context['keyword'] = '?keyword=' + keyword
@@ -15,6 +13,5 @@ def bb_context_processor(request):
             if context['all']:
                 context['all'] += '&page' + page
             else:
-                 context['all'] = '?page' + page
+                context['all'] = '?page' + page
     return context
-

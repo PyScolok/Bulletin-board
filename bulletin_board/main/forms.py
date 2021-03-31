@@ -3,7 +3,7 @@ from django.contrib.auth import password_validation
 from django.core.exceptions import ValidationError
 from snowpenguin.django.recaptcha3.fields import ReCaptchaField
 
-from .models import AdvancedUser, user_registrated, SuperRubric, SubRubric, Ad, AdditionalImage, Comment
+from .models import AdvancedUser, user_registered, SuperRubric, SubRubric, Ad, AdditionalImage, Comment
 
 
 class ChangeUserInfoForm(forms.ModelForm):
@@ -20,8 +20,10 @@ class RegisterUserForm(forms.ModelForm):
     """Форма занесения сведений о новом пользователе при регистрации"""
 
     email = forms.EmailField(required=True, label='Адрес электронной почты')
-    password1 = forms.CharField(label='Пароль', widget=forms.PasswordInput, help_text=password_validation.password_validators_help_text_html())
-    password2 = forms.CharField(label='Пароль (повторно)', widget=forms.PasswordInput, help_text='Введите тот же самый пароль еще раз')
+    password1 = forms.CharField(label='Пароль', widget=forms.PasswordInput,
+                                help_text=password_validation.password_validators_help_text_html())
+    password2 = forms.CharField(label='Пароль (повторно)', widget=forms.PasswordInput,
+                                help_text='Введите тот же самый пароль еще раз')
 
     def clean_password(self):
         """Валидация пароля"""
@@ -47,18 +49,19 @@ class RegisterUserForm(forms.ModelForm):
         user.is_activated = False
         if commit:
             user.save()
-        user_registrated.send(RegisterUserForm, instance=user)
+        user_registered.send(RegisterUserForm, instance=user)
         return user
-    
+
     class Meta:
         model = AdvancedUser
         fields = ('username', 'email', 'password1', 'password2', 'first_name', 'last_name', 'send_messages')
-    
+
 
 class SubRubricForm(forms.ModelForm):
     """Форма выбора подрубрик"""
 
-    super_rubric = forms.ModelChoiceField(queryset=SuperRubric.objects.all(), empty_label=None, required=True, label='Надрубрика')
+    queryset = SuperRubric.objects.all()
+    super_rubric = forms.ModelChoiceField(queryset=queryset, empty_label=None, required=True, label='Надрубрика')
 
     class Meta:
         model = SubRubric
@@ -79,6 +82,7 @@ class AdForm(forms.ModelForm):
         fields = '__all__'
         widgets = {'author': forms.HiddenInput}
 
+
 # Нбор форм для добавления дополнительных изображений
 AIFormSet = forms.inlineformset_factory(Ad, AdditionalImage, fields="__all__")
 
@@ -90,5 +94,5 @@ class CommentForm(forms.ModelForm):
 
     class Meta:
         model = Comment
-        exclude = ('is_active', )
+        exclude = ('is_active',)
         widgets = {'ad': forms.HiddenInput}

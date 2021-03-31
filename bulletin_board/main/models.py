@@ -3,34 +3,29 @@ from django.db.models.signals import post_save
 from django.contrib.auth.models import AbstractUser
 from django.dispatch import Signal
 
-from .utilities import send_activasion_notification, get_timestamp_path, send_new_comment_nitification
+from .utilities import send_activation_notification, get_timestamp_path, send_new_comment_notification
 
 
-user_registrated = Signal(providing_args=['instance'])
+def user_registered_dispatcher(**kwargs):
+    send_activation_notification(kwargs['instance'])
 
-def user_registrated_dispatcher(sender, **kwargs):
-    send_activasion_notification(kwargs['instance'])
 
-user_registrated.connect(user_registrated_dispatcher)
-
-def post_save_dispatsher(sender, **kwargs):
+def post_save_dispatcher(**kwargs):
     author = kwargs['instance'].ad.author
     if kwargs['created'] and author.send_messages:
-        send_new_comment_nitification(kwargs['instance'])
-
-
+        send_new_comment_notification(kwargs['instance'])
 
 
 class AdvancedUser(AbstractUser):
     """Модель пользователя с дополнительными настройками"""
-    
+
     is_activated = models.BooleanField(default=True, db_index=True, verbose_name='Активирован?')
     send_messages = models.BooleanField(default=True, verbose_name='Уведомлять о новых комментариях?')
 
     def get_full_name(self):
         """Формирование полного имени"""
         return f'{self.first_name}  {self.last_name}'
-    
+
     def delete(self, *args, **kwargs):
         """Удаление обхявлений связанных с пользователем"""
         for ad in self.ad_set.all():
@@ -46,7 +41,8 @@ class Rubric(models.Model):
 
     name = models.CharField(max_length=20, db_index=True, unique=True, verbose_name='Название')
     order = models.SmallIntegerField(default=0, db_index=True, verbose_name='Порядок')
-    super_rubric = models.ForeignKey('SuperRubric', on_delete=models.PROTECT, null=True, blank=True, verbose_name='Надрубрика')
+    super_rubric = models.ForeignKey('SuperRubric', on_delete=models.PROTECT, null=True, blank=True,
+                                     verbose_name='Надрубрика')
 
 
 class SuperRubricManager(models.Manager):
@@ -63,7 +59,7 @@ class SuperRubric(Rubric):
 
     def __str__(self):
         return self.name
-    
+
     class Meta:
         proxy = True
         ordering = ('order', 'name')
@@ -84,8 +80,8 @@ class SubRubric(Rubric):
     objects = SubRubricManager()
 
     def __str__(self):
-        return '%s - %s' % (self.super_rubric.name, self.name)
-    
+        return f'{self.super_rubric.name} - {self.name}'
+
     class Meta:
         proxy = True
         ordering = ('super_rubric__order', 'super_rubric__name', 'order', 'name')
@@ -138,12 +134,14 @@ class Comment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, db_index=True, verbose_name='Опубликован')
 
     def __str__(self):
-        return 'Комментарий от %s' % self.author
+        return f'Комментарий от {self.author}'
 
     class Meta:
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
         ordering = ['created_at']
 
-post_save.connect(post_save_dispatsher, sender=Comment)
 
+user_registered = Signal(providing_args=['instance'])
+user_registered.connect(user_registered_dispatcher)
+post_save.connect(post_save_dispatcher, sender=Comment)

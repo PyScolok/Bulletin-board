@@ -1,7 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth import logout
-from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView, PasswordResetView, PasswordResetConfirmView
+from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView, PasswordResetView,\
+    PasswordResetConfirmView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.views.generic.edit import UpdateView, CreateView, DeleteView
@@ -9,9 +10,6 @@ from django.views.generic.base import TemplateView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
 from django.core.signing import BadSignature
-from django.utils.http import urlsafe_base64_encode
-from django.contrib.auth.tokens import default_token_generator
-from django.utils.encoding import force_bytes
 from django.core.paginator import Paginator
 from django.db.models import Q
 
@@ -42,7 +40,7 @@ class ChangeUserInfoView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
 
 
 class ChangeUserPasswordView(PasswordChangeView):
-    """Cмена пароля пользвателя"""
+    """Смена пароля пользвателя"""
 
     template_name = 'accounts/change_password.html'
     success_url = reverse_lazy('main:password_change_done')
@@ -126,12 +124,14 @@ def index(request):
     context = {'ads': ads}
     return render(request, 'main/index.html', context)
 
+
 @login_required
 def profile(request):
     """Страница профиля"""
     ads = Ad.objects.filter(author=request.user.pk)
     context = {'ads': ads}
     return render(request, 'main/profile.html', context)
+
 
 @login_required
 def profile_ad_detail(request, pk):
@@ -146,11 +146,12 @@ def profile_ad_detail(request, pk):
     }
     return render(request, 'main/profile_ad_detail.html', context)
 
+
 @login_required
 def profile_ad_add(request):
     """Добавление объявления"""
     if request.method == 'POST':
-        form =AdForm(request.POST, request.FILES)
+        form = AdForm(request.POST, request.FILES)
         if form.is_valid():
             ad = form.save()
             formset = AIFormSet(request.POST, request.FILES, instance=ad)
@@ -163,6 +164,7 @@ def profile_ad_add(request):
         formset = AIFormSet()
     context = {'form': form, 'formset': formset}
     return render(request, 'main/profile_ad_add.html', context)
+
 
 @login_required
 def profile_ad_change(request, pk):
@@ -183,6 +185,7 @@ def profile_ad_change(request, pk):
     context = {'form': form, 'formset': formset}
     return render(request, 'main/profile_ad_change.html', context)
 
+
 @login_required
 def profile_ad_delete(request, pk):
     """Удаление объявления"""
@@ -194,6 +197,7 @@ def profile_ad_delete(request, pk):
     else:
         context = {'ad': ad}
         return render(request, 'main/profile_ad_delete.html', context)
+
 
 def user_activate(request, sign):
     """Страницы с результатом активации"""
@@ -210,6 +214,7 @@ def user_activate(request, sign):
         user.is_activated = True
         user.save()
     return render(request, template)
+
 
 def by_rubric(request, pk):
     """Список объявлений"""
@@ -233,6 +238,7 @@ def by_rubric(request, pk):
         'ads': page.object_list, 'form': form
     }
     return render(request, 'main/by_rubric.html', context)
+
 
 def detail(request, rubric_pk, pk):
     """Детальное описание объявления"""
@@ -261,4 +267,3 @@ def detail(request, rubric_pk, pk):
         'form': form,
     }
     return render(request, 'main/detail.html', context)
-
